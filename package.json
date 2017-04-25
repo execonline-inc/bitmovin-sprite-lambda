@@ -26,8 +26,11 @@
     "webpack": "latest"
   },
   "dependencies": {
+    "aws-sdk": "^2.50.0",
     "babel-runtime": "latest",
-    "bitcodin": "^0.7.0",
-    "json-loader": "latest"
+    "bitcodin": "https://github.com/execonline-inc/bitcodin-node/tree/master",
+    "dotenv": "^4.0.0",
+    "json-loader": "latest",
+    "request-promise": "^4.2.1"
   }
 }
