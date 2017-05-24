@@ -1,8 +1,8 @@
 const createSprite = (bitcodin, jobId) => {
   let spriteConfig = {
     "jobId": parseInt(jobId),
-    "height": 240,
-    "width": 320,
+    "height": 120,
+    "width": 160,
     "distance": 5,
     "async": true
   }
@@ -42,18 +42,24 @@ const transferToS3 = (res, message, fileType) => {
   return s3Promise
 }
 
+const getJpgName = (res) => {
+  const rawJpgName = res.spriteUrl.match(/sprites\/.*/)[0]
+  const jpgName = rawJpgName.replace('sprites', '')
+  return jpgName;
+}
+
 class BitmovinSpriteLambda {
   start = (message) => {
     const jobId = message.payload.jobId;
     const bitcodin = require('bitcodin')(process.env.BITMOVIN_API_TOKEN);
     const rp = require('request-promise');
-    const jpgName = '/sprite.jpg'
     const vttName = '/sprite.vtt'
     return createSprite(bitcodin, jobId)
       .then((res) => {
-        return Promise.all([getUrl(res.spriteUrl, rp), getUrl(res.vttUrl, rp)]);
+        return Promise.all([getUrl(res.spriteUrl, rp), getUrl(res.vttUrl, rp), getJpgName(res)]);
       })
       .then((res) => {
+        const jpgName = res[2]
         console.log('Successfully requested sprite information')
         return Promise.all([transferToS3(res[0], message, jpgName), transferToS3(res[1], message, vttName)]);
       }
