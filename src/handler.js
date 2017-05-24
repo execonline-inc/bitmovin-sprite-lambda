@@ -10,32 +10,42 @@ function processMessage(event) {
   return message;
 }
 
+const successMessage = (res) => {
+  console.log('Successfully transferred sprite jpg and vtt files to S3', res);
+  let message = {
+    statusCode: 200,
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: "Successfully transferred sprite and completed execution of function, " + JSON.stringify(res)
+  }
+  console.log("Success message: ", message);
+  return message;
+}
+
+const errorMessage = (error) => {
+  console.log("ERROR failed to transfer sprite to S3", error);
+  let message = {
+    statusCode: 500,
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: "Error, " + JSON.stringify(error)
+  }
+  console.log("Error message: ", message);
+  return message;
+}
+
 function entry(event, context, callback) {
   const bit = new BitmovinSpriteLambda();
   console.log('Starting new bitmovin sprite creation');
   const message = processMessage(event);
   bit.start(message)
-    .then((result) => {
-      console.log('Successfully transferred sprite jpg and vtt files to S3', result);
-      let message = {
-        statusCode: 200,
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: "Successfully transferred sprite and completed execution of function, " + JSON.stringify(result)
-      }
-      callback(null, message);
+    .then((res) => {
+      callback(null, successMessage(res));
     })
-    .catch((error) =>{
-      console.log("ERROR failed to transfer sprite to S3", error);
-      let message = {
-        statusCode: 500,
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: "Error, " + JSON.stringify(error)
-      }
-      callback(null, message);
+    .catch((error) => {
+      callback(null, errorMessage(error));
     }
   );
 }
@@ -46,25 +56,11 @@ function test() {
   const event = jf.readFileSync('event.json');
   const message = processMessage(event);
   bit.start(message)
-    .then((result) => {
-      console.log('Successfully transferred sprite jpg and vtt files to S3', result);
-      let message = {
-        statusCode: 200,
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: "Successfully transferred sprite and completed execution of function, " + JSON.stringify(result)
-      }
+    .then((res) => {
+      successMessage(res);
     })
     .catch((error) =>{
-      console.log("ERROR failed to transfer sprite to S3", error);
-      let message = {
-        statusCode: 500,
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: "Error, " + JSON.stringify(error)
-      }
+      errorMessage(error);
     }
   );
 }
