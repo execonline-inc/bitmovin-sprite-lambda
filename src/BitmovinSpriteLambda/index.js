@@ -3,7 +3,7 @@ const createSprite = (bitcodin, jobId) => {
     "jobId": parseInt(jobId),
     "height": 120,
     "width": 160,
-    "distance": 5,
+    "distance": 15,
     "async": true
   }
   return bitcodin.sprite.create(spriteConfig)
