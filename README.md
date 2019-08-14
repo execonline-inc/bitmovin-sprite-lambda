@@ -1,3 +1,4 @@
+***** This repository is deprecated *****
 # bitmovin-sprite-lambda
  The bitmovin-sprite-lambda is a lambda function that allows for asynchronous sprite creation for completed bitmovin encoding jobs.  This function is triggered by a bitmovin notification when a bitmovin encoding job finishes transfering to our S3 bucket.  The lambda parses the jobId and outputUrl from the message, creates a sprite, and outputs the created vtt and jpg files to the appropriate folder on S3.
  
